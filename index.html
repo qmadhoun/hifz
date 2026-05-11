@@ -1,0 +1,2356 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quran Hifz Tracker — المتابع</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=DM+Mono:wght@400;500&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #C9A84C;
+    --gold-light: #E8D5A3;
+    --gold-dark: #8B6914;
+    --emerald: #1A6B4A;
+    --emerald-light: #2A9D6E;
+    --emerald-mid: #3DB88A;
+    --navy: #0F1B2D;
+    --navy-mid: #1E3048;
+    --navy-light: #2E4A6E;
+    --parchment: #F7F3E9;
+    --parchment-dark: #EDE7D3;
+    --cream: #FDFAF4;
+    --text-main: #1A1208;
+    --text-mid: #4A3F2A;
+    --text-muted: #8A7A5A;
+    --done: #1A6B4A;
+    --partial: #C9A84C;
+    --missed: #C0392B;
+    --done-bg: #E8F5EE;
+    --partial-bg: #FEF9EC;
+    --missed-bg: #FDEEEE;
+    --border: rgba(201,168,76,0.25);
+    --shadow: 0 2px 20px rgba(15,27,45,0.08);
+    --radius: 12px;
+    --radius-sm: 8px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Outfit', sans-serif;
+    background: var(--parchment);
+    color: var(--text-main);
+    min-height: 100vh;
+  }
+
+  /* ===== HEADER ===== */
+  .header {
+    background: var(--navy);
+    padding: 0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    border-bottom: 2px solid var(--gold);
+  }
+  .header-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 14px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .logo-icon {
+    width: 40px; height: 40px;
+    background: var(--gold);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Amiri', serif;
+    font-size: 20px;
+    color: var(--navy);
+    font-weight: 700;
+  }
+  .logo-text h1 {
+    font-size: 18px;
+    font-weight: 600;
+    color: #fff;
+    letter-spacing: 0.3px;
+  }
+  .logo-text p {
+    font-family: 'Amiri', serif;
+    font-size: 13px;
+    color: var(--gold-light);
+    direction: rtl;
+  }
+  .header-stats {
+    display: flex;
+    gap: 20px;
+  }
+  .hstat {
+    text-align: center;
+  }
+  .hstat-val {
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--gold);
+    font-family: 'DM Mono', monospace;
+  }
+  .hstat-lbl {
+    font-size: 11px;
+    color: rgba(255,255,255,0.5);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+  }
+  .nav-tabs {
+    display: flex;
+    gap: 2px;
+  }
+  .nav-tab {
+    padding: 8px 16px;
+    border-radius: var(--radius-sm);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    color: rgba(255,255,255,0.55);
+    transition: all 0.2s;
+    border: none;
+    background: transparent;
+  }
+  .nav-tab.active, .nav-tab:hover {
+    background: rgba(201,168,76,0.15);
+    color: var(--gold);
+  }
+
+  /* ===== MAIN ===== */
+  .main {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 24px;
+  }
+  .page { display: none; }
+  .page.active { display: block; }
+
+  /* ===== HERO BANNER ===== */
+  .hero {
+    background: var(--navy-mid);
+    border-radius: var(--radius);
+    padding: 28px 32px;
+    margin-bottom: 24px;
+    border: 1px solid var(--gold);
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: 'بِسْمِ اللهِ الرَّحْمٰنِ الرَّحِيْمِ';
+    position: absolute;
+    right: 24px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-family: 'Amiri', serif;
+    font-size: 28px;
+    color: rgba(201,168,76,0.12);
+    direction: rtl;
+    pointer-events: none;
+  }
+  .hero-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+  .hero-title {
+    font-size: 13px;
+    color: var(--gold);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 6px;
+  }
+  .hero-name {
+    font-size: 26px;
+    font-weight: 600;
+    color: #fff;
+  }
+  .hero-sub {
+    font-size: 14px;
+    color: rgba(255,255,255,0.5);
+    margin-top: 4px;
+  }
+  .today-date {
+    text-align: right;
+  }
+  .today-date .date-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 28px;
+    color: var(--gold);
+    font-weight: 500;
+  }
+  .today-date .date-lbl {
+    font-size: 12px;
+    color: rgba(255,255,255,0.4);
+    display: block;
+  }
+  .progress-bars {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 16px;
+  }
+  .pbar-item label {
+    font-size: 12px;
+    color: rgba(255,255,255,0.5);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 6px;
+  }
+  .pbar-item label span {
+    color: rgba(255,255,255,0.8);
+    font-family: 'DM Mono', monospace;
+    text-transform: none;
+    letter-spacing: 0;
+    font-size: 13px;
+  }
+  .pbar-track {
+    height: 6px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .pbar-fill {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 0.6s ease;
+  }
+  .pbar-fill.gold { background: var(--gold); }
+  .pbar-fill.emerald { background: var(--emerald-mid); }
+  .pbar-fill.blue { background: #4A9FD4; }
+
+  /* ===== CARDS GRID ===== */
+  .cards-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 20px;
+    margin-bottom: 24px;
+  }
+  .card {
+    background: var(--cream);
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    padding: 20px 24px;
+    box-shadow: var(--shadow);
+  }
+  .card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+  }
+  .card-title {
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .card-title .dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+  }
+  .dot-gold { background: var(--gold); }
+  .dot-emerald { background: var(--emerald-mid); }
+  .dot-blue { background: #4A9FD4; }
+
+  /* ===== TODAY'S TASKS ===== */
+  .task-list { display: flex; flex-direction: column; gap: 10px; }
+  .task-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 12px 14px;
+    background: var(--parchment);
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+    transition: all 0.2s;
+    cursor: pointer;
+  }
+  .task-item:hover { border-color: var(--gold); transform: translateX(3px); }
+  .task-icon {
+    width: 36px; height: 36px;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+  .task-icon.hifz { background: rgba(201,168,76,0.15); }
+  .task-icon.muraja { background: rgba(26,107,74,0.12); }
+  .task-icon.sheikh { background: rgba(74,159,212,0.12); }
+  .task-body { flex: 1; }
+  .task-track {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-bottom: 2px;
+  }
+  .track-hifz { color: var(--gold-dark); }
+  .track-muraja { color: var(--emerald); }
+  .track-sheikh { color: #2471A3; }
+  .task-desc { font-size: 14px; color: var(--text-main); font-weight: 500; }
+  .task-meta { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+  .task-status {
+    flex-shrink: 0;
+  }
+  .status-btn {
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    border: 1.5px solid;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .status-done { background: var(--done-bg); color: var(--done); border-color: var(--done); }
+  .status-partial { background: var(--partial-bg); color: #8B6914; border-color: var(--gold); }
+  .status-missed { background: var(--missed-bg); color: var(--missed); border-color: var(--missed); }
+  .status-pending { background: var(--parchment-dark); color: var(--text-muted); border-color: var(--border); }
+
+  /* ===== STATS SIDE ===== */
+  .stat-box {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .mini-stat {
+    background: var(--parchment);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .mini-stat-icon {
+    width: 40px; height: 40px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+  }
+  .mini-stat-body .val {
+    font-size: 22px;
+    font-family: 'DM Mono', monospace;
+    font-weight: 500;
+    color: var(--text-main);
+    line-height: 1;
+  }
+  .mini-stat-body .lbl {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 3px;
+  }
+  .streak-fire {
+    font-size: 20px;
+  }
+
+  /* ===== WEEKLY OVERVIEW ===== */
+  .week-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 8px;
+  }
+  .day-cell {
+    border-radius: var(--radius-sm);
+    padding: 10px 6px;
+    text-align: center;
+    border: 1.5px solid var(--border);
+    background: var(--parchment);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .day-cell:hover { border-color: var(--gold); }
+  .day-cell.today { border-color: var(--gold); background: rgba(201,168,76,0.08); }
+  .day-cell.status-all-done { background: var(--done-bg); border-color: var(--done); }
+  .day-cell.status-partial { background: var(--partial-bg); border-color: var(--gold); }
+  .day-cell.status-missed-any { background: var(--missed-bg); border-color: var(--missed); }
+  .day-cell .day-name { font-size: 10px; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text-muted); }
+  .day-cell .day-num { font-size: 18px; font-weight: 600; font-family: 'DM Mono', monospace; color: var(--text-main); margin: 2px 0; }
+  .day-cell .day-dots { display: flex; justify-content: center; gap: 3px; }
+  .day-cell .day-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--border); }
+  .day-cell .day-dot.done { background: var(--done); }
+  .day-cell .day-dot.partial { background: var(--gold); }
+  .day-cell .day-dot.missed { background: var(--missed); }
+
+  /* ===== LOG TABLE ===== */
+  .log-wrap { overflow-x: auto; border-radius: var(--radius); border: 1px solid var(--border); }
+  .log-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .log-table th {
+    background: var(--navy);
+    color: rgba(255,255,255,0.65);
+    padding: 10px 14px;
+    text-align: left;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    position: sticky;
+    top: 0;
+  }
+  .log-table td {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-main);
+    vertical-align: middle;
+  }
+  .log-table tr:last-child td { border-bottom: none; }
+  .log-table tr:hover td { background: rgba(201,168,76,0.04); }
+  .log-table tr.today-row td { background: rgba(201,168,76,0.07); }
+
+  .badge {
+    display: inline-block;
+    padding: 2px 9px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+  .badge-done { background: var(--done-bg); color: var(--done); }
+  .badge-partial { background: var(--partial-bg); color: #8B6914; }
+  .badge-missed { background: var(--missed-bg); color: var(--missed); }
+  .badge-pending { background: var(--parchment-dark); color: var(--text-muted); }
+
+  /* ===== MILESTONES ===== */
+  .milestones-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 14px;
+  }
+  .milestone-card {
+    background: var(--cream);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.2s;
+  }
+  .milestone-card.achieved {
+    border-color: var(--gold);
+    background: linear-gradient(135deg, rgba(201,168,76,0.06) 0%, var(--cream) 60%);
+  }
+  .milestone-card.achieved::before {
+    content: '✦';
+    position: absolute;
+    right: 14px;
+    top: 14px;
+    color: var(--gold);
+    font-size: 18px;
+  }
+  .milestone-icon { font-size: 28px; margin-bottom: 8px; }
+  .milestone-name { font-size: 14px; font-weight: 600; color: var(--text-main); margin-bottom: 4px; }
+  .milestone-detail { font-size: 12px; color: var(--text-muted); margin-bottom: 10px; }
+  .milestone-progress-bar {
+    height: 4px;
+    background: var(--parchment-dark);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .milestone-progress-fill {
+    height: 100%;
+    background: var(--gold);
+    border-radius: 2px;
+    transition: width 0.6s ease;
+  }
+  .milestone-card.achieved .milestone-progress-fill { background: var(--emerald-mid); }
+  .milestone-pct { font-size: 11px; color: var(--text-muted); margin-top: 5px; text-align: right; font-family: 'DM Mono', monospace; }
+
+  /* ===== INPUT + CONTROLS ===== */
+  .form-row { display: flex; gap: 12px; margin-bottom: 14px; flex-wrap: wrap; }
+  .form-group { display: flex; flex-direction: column; gap: 5px; flex: 1; min-width: 160px; }
+  .form-group label { font-size: 12px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.7px; }
+  .form-group input, .form-group select, .form-group textarea {
+    background: var(--parchment);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 9px 12px;
+    font-size: 14px;
+    font-family: 'Outfit', sans-serif;
+    color: var(--text-main);
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+    border-color: var(--gold);
+  }
+  .btn {
+    padding: 10px 20px;
+    border-radius: var(--radius-sm);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .btn-gold { background: var(--gold); color: var(--navy); }
+  .btn-gold:hover { background: var(--gold-dark); color: #fff; }
+  .btn-outline { background: transparent; color: var(--gold); border: 1.5px solid var(--gold); }
+  .btn-outline:hover { background: rgba(201,168,76,0.1); }
+  .btn-danger { background: transparent; color: var(--missed); border: 1.5px solid var(--missed); }
+  .btn-danger:hover { background: var(--missed-bg); }
+  .btn-sm { padding: 6px 12px; font-size: 12px; }
+
+  /* ===== SUMMARY CARDS ===== */
+  .summary-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 14px;
+    margin-bottom: 20px;
+  }
+  .sum-card {
+    background: var(--cream);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px;
+    text-align: center;
+  }
+  .sum-card .val { font-size: 28px; font-weight: 600; font-family: 'DM Mono', monospace; color: var(--text-main); }
+  .sum-card .lbl { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+  .sum-card.accent-gold .val { color: var(--gold-dark); }
+  .sum-card.accent-green .val { color: var(--emerald); }
+  .sum-card.accent-blue .val { color: #2471A3; }
+  .sum-card.accent-red .val { color: var(--missed); }
+
+  /* ===== CATCHUP ALERT ===== */
+  .alert {
+    padding: 12px 16px;
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+    font-size: 14px;
+    border: 1px solid;
+  }
+  .alert-warn { background: var(--partial-bg); border-color: var(--gold); color: #7A5A0A; }
+  .alert-info { background: #EBF5FB; border-color: #AED6F1; color: #1A5276; }
+  .alert-success { background: var(--done-bg); border-color: #82C9A5; color: #0D5A35; }
+
+  /* ===== NOTES SECTION ===== */
+  .notes-list { display: flex; flex-direction: column; gap: 10px; }
+  .note-item {
+    background: var(--parchment);
+    border-left: 3px solid var(--gold);
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    padding: 10px 14px;
+  }
+  .note-date { font-size: 11px; color: var(--text-muted); font-family: 'DM Mono', monospace; }
+  .note-text { font-size: 14px; color: var(--text-main); margin-top: 4px; }
+
+  /* ===== ISLAMIC MOTIF DIVIDER ===== */
+  .divider {
+    text-align: center;
+    margin: 20px 0;
+    color: var(--gold);
+    font-size: 18px;
+    opacity: 0.4;
+    letter-spacing: 8px;
+    font-family: 'Amiri', serif;
+  }
+
+  /* ===== JUZZ PROGRESS MAP ===== */
+  .juz-map {
+    display: grid;
+    grid-template-columns: repeat(10, 1fr);
+    gap: 6px;
+  }
+  .juz-cell {
+    aspect-ratio: 1;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 600;
+    border: 1.5px solid;
+    cursor: pointer;
+    transition: transform 0.15s;
+    position: relative;
+  }
+  .juz-cell:hover { transform: scale(1.07); }
+  .juz-cell.memorized { background: var(--done-bg); border-color: var(--done); color: var(--done); }
+  .juz-cell.partial-mem { background: var(--partial-bg); border-color: var(--gold); color: #8B6914; }
+  .juz-cell.remaining { background: var(--parchment); border-color: var(--border); color: var(--text-muted); }
+  .juz-cell .juz-num { font-family: 'DM Mono', monospace; font-size: 15px; }
+  .juz-cell .juz-label { font-size: 9px; text-transform: uppercase; letter-spacing: 0.5px; }
+
+  /* ===== TABS ===== */
+  .inner-tabs { display: flex; gap: 4px; margin-bottom: 16px; }
+  .inner-tab {
+    padding: 7px 14px;
+    border-radius: var(--radius-sm);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    color: var(--text-muted);
+    border: 1px solid var(--border);
+    background: transparent;
+    transition: all 0.2s;
+  }
+  .inner-tab.active { background: var(--navy); color: var(--gold); border-color: var(--navy); }
+
+  /* ===== RESPONSIVENESS ===== */
+  @media (max-width: 768px) {
+    .header-stats { display: none; }
+    .cards-grid { grid-template-columns: 1fr; }
+    .juz-map { grid-template-columns: repeat(6, 1fr); }
+    .progress-bars { grid-template-columns: 1fr; }
+    .hero::before { display: none; }
+  }
+
+  /* ===== ANIMATIONS ===== */
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+  .page.active { animation: fadeIn 0.3s ease; }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
+  .pulse { animation: pulse 2s infinite; }
+
+  /* ===== FLOATING LOG BUTTON ===== */
+  .fab {
+    position: fixed;
+    bottom: 28px;
+    right: 28px;
+    width: 56px; height: 56px;
+    background: var(--gold);
+    color: var(--navy);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 24px;
+    cursor: pointer;
+    box-shadow: 0 4px 20px rgba(201,168,76,0.4);
+    border: none;
+    transition: all 0.2s;
+    z-index: 200;
+  }
+  .fab:hover { background: var(--gold-dark); color: #fff; transform: scale(1.08); }
+
+  /* ===== MODAL ===== */
+  .modal-overlay {
+    display: none;
+    position: fixed; inset: 0;
+    background: rgba(15,27,45,0.65);
+    z-index: 500;
+    align-items: center;
+    justify-content: center;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: var(--cream);
+    border-radius: var(--radius);
+    border: 1px solid var(--gold);
+    padding: 28px;
+    width: 90%;
+    max-width: 540px;
+    max-height: 85vh;
+    overflow-y: auto;
+    animation: fadeIn 0.25s ease;
+  }
+  .modal h3 {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text-main);
+    margin-bottom: 20px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--border);
+    font-family: 'Amiri', serif;
+  }
+  .modal-footer { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; }
+
+  .section-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 14px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .info-text {
+    font-size: 13px;
+    color: var(--text-muted);
+    line-height: 1.6;
+  }
+  
+  .quran-quote {
+    font-family: 'Amiri', serif;
+    font-size: 22px;
+    direction: rtl;
+    text-align: center;
+    color: var(--navy-mid);
+    padding: 16px;
+    background: rgba(201,168,76,0.06);
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+    margin-bottom: 20px;
+    line-height: 1.8;
+  }
+
+  /* ===== TIMER ===== */
+  .timer-widget {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+  .timer-display {
+    font-family: 'DM Mono', monospace;
+    font-size: 52px;
+    color: var(--gold);
+    letter-spacing: 3px;
+    line-height: 1;
+    min-width: 148px;
+    transition: color 0.3s;
+  }
+  .timer-display.running { color: var(--emerald-mid); }
+  .timer-controls { display: flex; flex-direction: column; gap: 10px; }
+  .timer-modes { display: flex; gap: 6px; flex-wrap: wrap; }
+  .timer-mode-btn {
+    padding: 6px 13px;
+    border-radius: 20px;
+    border: 1.5px solid var(--border);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    background: var(--parchment);
+    color: var(--text-muted);
+    transition: all 0.2s;
+  }
+  .timer-mode-btn.active {
+    background: rgba(201,168,76,0.14);
+    border-color: var(--gold);
+    color: var(--gold-dark);
+  }
+  .timer-mode-btn.mode-review.active {
+    background: rgba(26,107,74,0.10);
+    border-color: var(--emerald-mid);
+    color: var(--emerald);
+  }
+  .timer-mode-btn.mode-manzil.active {
+    background: rgba(74,159,212,0.12);
+    border-color: #4A9FD4;
+    color: #2471A3;
+  }
+  .timer-actions { display: flex; gap: 8px; }
+  .timer-breakdown {
+    display: flex;
+    gap: 16px;
+    font-size: 12px;
+    font-family: 'DM Mono', monospace;
+    padding: 10px 14px;
+    background: var(--parchment);
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+    flex-wrap: wrap;
+  }
+  .timer-breakdown .tbr-item { display: flex; align-items: center; gap: 5px; }
+  .timer-ratio {
+    font-size: 11px;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-weight: 600;
+    background: var(--partial-bg);
+    color: #7A5A0A;
+    border: 1px solid var(--gold);
+  }
+  .timer-ratio.good { background: var(--done-bg); color: var(--done); border-color: var(--done); }
+
+  /* ===== GRADE BADGE ===== */
+  .grade-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px; height: 22px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  .grade-A { background: var(--done-bg); color: var(--done); }
+  .grade-B { background: #E8F8F0; color: #1E8449; }
+  .grade-C { background: var(--partial-bg); color: #8B6914; }
+  .grade-D { background: #FDECEA; color: #C0392B; }
+  .grade-E { background: var(--missed-bg); color: #922B21; }
+  .grade-select {
+    display: flex; gap: 6px; flex-wrap: wrap;
+  }
+  .grade-opt {
+    width: 38px; height: 38px;
+    border-radius: 8px;
+    border: 2px solid var(--border);
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    background: var(--parchment);
+    color: var(--text-muted);
+    transition: all 0.15s;
+  }
+  .grade-opt:hover { transform: scale(1.1); }
+  .grade-opt.sel-A { background: var(--done-bg); border-color: var(--done); color: var(--done); }
+  .grade-opt.sel-B { background: #E8F8F0; border-color: #1E8449; color: #1E8449; }
+  .grade-opt.sel-C { background: var(--partial-bg); border-color: var(--gold); color: #8B6914; }
+  .grade-opt.sel-D { background: #FDECEA; border-color: #C0392B; color: #C0392B; }
+  .grade-opt.sel-E { background: var(--missed-bg); border-color: #922B21; color: #922B21; }
+  .grade-note { font-size: 11px; color: var(--text-muted); margin-top: 5px; font-style: italic; }
+
+  /* ===== SRS & CORRECTION TASKS ===== */
+  .task-item.srs-task { border-left: 3px solid var(--emerald-mid); }
+  .task-item.correction-task { border-left: 3px solid var(--missed); background: var(--missed-bg); }
+  .task-item.manzil-task { border-left: 3px solid #4A9FD4; }
+  .srs-badge {
+    font-size: 10px;
+    background: rgba(26,107,74,0.12);
+    color: var(--emerald);
+    border: 1px solid var(--emerald-mid);
+    border-radius: 4px;
+    padding: 1px 6px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+  }
+  .correction-badge {
+    font-size: 10px;
+    background: var(--missed-bg);
+    color: var(--missed);
+    border: 1px solid var(--missed);
+    border-radius: 4px;
+    padding: 1px 6px;
+    font-weight: 700;
+  }
+
+  /* ===== JOURNEY INTELLIGENCE ===== */
+  .journey-intel {
+    background: linear-gradient(135deg, rgba(15,27,45,0.04) 0%, rgba(201,168,76,0.04) 100%);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px 20px;
+    margin-top: 16px;
+  }
+  .journey-intel-title {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-muted);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .intel-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+  }
+  .intel-item {
+    text-align: center;
+  }
+  .intel-val {
+    font-family: 'DM Mono', monospace;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text-main);
+    line-height: 1.1;
+  }
+  .intel-val.warn { color: var(--missed); }
+  .intel-val.good { color: var(--emerald); }
+  .intel-lbl { font-size: 10px; color: var(--text-muted); margin-top: 3px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .finish-date-bar {
+    margin-top: 12px;
+    padding: 8px 12px;
+    background: rgba(201,168,76,0.08);
+    border-radius: var(--radius-sm);
+    border: 1px solid rgba(201,168,76,0.2);
+    font-size: 13px;
+    color: var(--text-mid);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .finish-date-bar strong { color: var(--gold-dark); }
+
+  /* ===== MANZIL CARD ===== */
+  .manzil-today-card {
+    background: linear-gradient(135deg, rgba(74,159,212,0.08) 0%, transparent 100%);
+    border: 1px solid rgba(74,159,212,0.3);
+    border-radius: var(--radius-sm);
+    padding: 10px 14px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 10px;
+  }
+  .manzil-today-card .manzil-icon {
+    font-size: 22px;
+  }
+  .manzil-today-card .manzil-body { flex: 1; }
+  .manzil-today-card .manzil-label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: #2471A3;
+    margin-bottom: 2px;
+  }
+  .manzil-today-card .manzil-desc { font-size: 14px; color: var(--text-main); font-weight: 500; }
+  .manzil-today-card .manzil-meta { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+
+  /* ===== BRIDGE COMPLETE ===== */
+  .bridge-alert {
+    background: linear-gradient(135deg, var(--done-bg) 0%, rgba(201,168,76,0.06) 100%);
+    border: 2px solid var(--gold);
+    border-radius: var(--radius);
+    padding: 16px 20px;
+    text-align: center;
+    margin-bottom: 16px;
+    font-family: 'Amiri', serif;
+  }
+  .bridge-alert .bridge-title { font-size: 22px; color: var(--gold-dark); margin-bottom: 4px; }
+  .bridge-alert .bridge-sub { font-size: 14px; color: var(--emerald); }
+
+  /* ===== TIME FIELD IN MODAL ===== */
+  .session-time-display {
+    background: rgba(201,168,76,0.08);
+    border: 1px solid var(--gold);
+    border-radius: var(--radius-sm);
+    padding: 8px 14px;
+    font-size: 13px;
+    color: var(--gold-dark);
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+
+  @media (max-width: 768px) {
+    .intel-grid { grid-template-columns: 1fr 1fr; }
+    .timer-display { font-size: 38px; }
+    .timer-breakdown { flex-direction: column; gap: 6px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-inner">
+    <div class="logo">
+      <div class="logo-icon">ق</div>
+      <div class="logo-text">
+        <h1>Quran Hifz Tracker</h1>
+        <p>المتابع الشامل للحفظ والمراجعة</p>
+      </div>
+    </div>
+    <div class="header-stats">
+      <div class="hstat">
+        <div class="hstat-val" id="h-total-mem">0</div>
+        <div class="hstat-lbl">Pages Memorized</div>
+      </div>
+      <div class="hstat">
+        <div class="hstat-val" id="h-streak">0</div>
+        <div class="hstat-lbl">Day Streak 🔥</div>
+      </div>
+      <div class="hstat">
+        <div class="hstat-val" id="h-pct">0%</div>
+        <div class="hstat-lbl">Journey Complete</div>
+      </div>
+    </div>
+    <div class="nav-tabs">
+      <button class="nav-tab active" onclick="switchPage('today')">Today</button>
+      <button class="nav-tab" onclick="switchPage('log')">Daily Log</button>
+      <button class="nav-tab" onclick="switchPage('juz')">Juz Map</button>
+      <button class="nav-tab" onclick="switchPage('summary')">Summary</button>
+      <button class="nav-tab" onclick="switchPage('milestones')">Milestones</button>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- ===== TODAY PAGE ===== -->
+  <div class="page active" id="page-today">
+
+    <div class="hero">
+      <div class="hero-top">
+        <div>
+          <div class="hero-title">Today's Plan</div>
+          <div class="hero-name" id="today-full-date">Loading...</div>
+          <div class="hero-sub" id="today-subtitle">May Allah make it easy for you</div>
+        </div>
+        <div class="today-date">
+          <div class="date-num" id="today-day-num">—</div>
+          <div class="date-lbl" id="today-day-name">—</div>
+        </div>
+      </div>
+      <div class="progress-bars">
+        <div class="pbar-item">
+          <label>New Hifz <span id="pb-hifz-txt">0 / 312 pages</span></label>
+          <div class="pbar-track"><div class="pbar-fill gold" id="pb-hifz" style="width:0%"></div></div>
+        </div>
+        <div class="pbar-item">
+          <label>Muraja'a <span id="pb-muraja-txt">0 / 604 pages</span></label>
+          <div class="pbar-track"><div class="pbar-fill emerald" id="pb-muraja" style="width:0%"></div></div>
+        </div>
+        <div class="pbar-item">
+          <label>Sheikh Reading <span id="pb-sheikh-txt">0 / 604 pages</span></label>
+          <div class="pbar-track"><div class="pbar-fill blue" id="pb-sheikh" style="width:0%"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div id="catchup-area"></div>
+
+    <!-- BRIDGE COMPLETE BANNER -->
+    <div id="bridge-banner" style="display:none"></div>
+
+    <!-- SESSION TIMER -->
+    <div class="card" style="margin-bottom:20px">
+      <div class="card-header">
+        <div class="card-title"><div class="dot dot-gold"></div> Session Timer</div>
+        <div class="timer-modes">
+          <button class="timer-mode-btn active" onclick="setTimerMode('hifz')" id="tmode-hifz">📖 New Hifz</button>
+          <button class="timer-mode-btn mode-review" onclick="setTimerMode('review')" id="tmode-review">🔁 Review</button>
+          <button class="timer-mode-btn mode-manzil" onclick="setTimerMode('manzil')" id="tmode-manzil">📚 Manzil</button>
+        </div>
+      </div>
+      <div class="timer-widget">
+        <div class="timer-display" id="timer-display">00:00</div>
+        <div class="timer-controls">
+          <div class="timer-actions">
+            <button class="btn btn-gold" id="timer-start-btn" onclick="toggleTimer()">&#9654; Start</button>
+            <button class="btn btn-outline" id="timer-log-btn" onclick="stopAndLog()" style="display:none">&#9209; Stop &amp; Log</button>
+            <button id="timer-reset-btn" onclick="resetTimer()" style="display:none;color:var(--text-muted);border:1px solid var(--border);background:transparent;border-radius:var(--radius-sm);padding:6px 10px;cursor:pointer;font-size:12px;font-weight:600">&#8635; Reset</button>
+          </div>
+          <div class="timer-breakdown" id="timer-breakdown">
+            <span class="tbr-item" style="color:var(--gold-dark)">&#128214; 0m</span>
+            <span class="tbr-item" style="color:var(--emerald)">&#128257; 0m</span>
+            <span class="tbr-item" style="color:#2471A3">&#128218; 0m</span>
+            <span id="timer-ratio-badge"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cards-grid">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title"><div class="dot dot-gold"></div> Today's Tasks</div>
+          <button class="btn btn-gold btn-sm" onclick="openLogModal()">＋ Log Today</button>
+        </div>
+        <div class="task-list" id="task-list">
+          <!-- generated -->
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title"><div class="dot dot-emerald"></div> Stats</div>
+        </div>
+        <div class="stat-box">
+          <div class="mini-stat">
+            <div class="mini-stat-icon" style="background:rgba(201,168,76,0.12)">📖</div>
+            <div class="mini-stat-body">
+              <div class="val" id="stat-new-mem">0</div>
+              <div class="lbl">Pages Memorized (Total)</div>
+            </div>
+          </div>
+          <div class="mini-stat">
+            <div class="mini-stat-icon" style="background:rgba(26,107,74,0.10)">🔁</div>
+            <div class="mini-stat-body">
+              <div class="val" id="stat-total-rev">0</div>
+              <div class="lbl">Pages Reviewed (Total)</div>
+            </div>
+          </div>
+          <div class="mini-stat">
+            <div class="mini-stat-icon" style="background:rgba(74,159,212,0.10)">🎙️</div>
+            <div class="mini-stat-body">
+              <div class="val" id="stat-sheikh-pages">0</div>
+              <div class="lbl">Sheikh Pages (Total)</div>
+            </div>
+          </div>
+          <div class="mini-stat">
+            <div class="mini-stat-icon" style="background:rgba(201,168,76,0.12)">🔥</div>
+            <div class="mini-stat-body">
+              <div class="val" id="stat-streak">0</div>
+              <div class="lbl">Current Streak (days)</div>
+            </div>
+          </div>
+          <!-- Journey Intelligence -->
+          <div class="journey-intel">
+            <div class="journey-intel-title">🧠 Journey Intelligence</div>
+            <div class="intel-grid">
+              <div class="intel-item">
+                <div class="intel-val" id="ji-pace">—</div>
+                <div class="intel-lbl">Pages/Day (14d avg)</div>
+              </div>
+              <div class="intel-item">
+                <div class="intel-val warn" id="ji-delays">0</div>
+                <div class="intel-lbl">Total Delays</div>
+              </div>
+              <div class="intel-item">
+                <div class="intel-val" id="ji-weeks">—</div>
+                <div class="intel-lbl">Weeks Left</div>
+              </div>
+            </div>
+            <div class="finish-date-bar" id="ji-finish-bar">
+              <span>📅</span> <span id="ji-finish-text">Log more days to calculate your finish date</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Weekly mini-calendar -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title"><div class="dot dot-gold"></div> This Week</div>
+        <span class="info-text" id="week-range-lbl"></span>
+      </div>
+      <div class="week-grid" id="week-grid"><!-- generated --></div>
+    </div>
+  </div>
+
+  <!-- ===== DAILY LOG PAGE ===== -->
+  <div class="page" id="page-log">
+    <div class="card" style="margin-bottom:20px">
+      <div class="card-header">
+        <div class="card-title"><div class="dot dot-gold"></div> Daily Log — All Days</div>
+        <div style="display:flex;gap:8px">
+          <select id="log-filter" onchange="renderLog()" style="font-size:13px;padding:5px 10px;border-radius:6px;border:1px solid var(--border);background:var(--parchment);color:var(--text-main)">
+            <option value="all">All Days</option>
+            <option value="missed">Missed Only</option>
+            <option value="partial">Partial Only</option>
+            <option value="done">Done Only</option>
+          </select>
+          <button class="btn btn-gold btn-sm" onclick="openLogModal()">＋ Log Entry</button>
+        </div>
+      </div>
+      <div class="log-wrap">
+        <table class="log-table" id="log-table">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Hifz Page</th>
+              <th>Review Pages</th>
+              <th>Sheikh Pages</th>
+              <th>Hifz</th>
+              <th>Review</th>
+              <th>Sheikh</th>
+              <th>Notes</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="log-tbody"><!-- generated --></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== JUZ MAP PAGE ===== -->
+  <div class="page" id="page-juz">
+    <div class="quran-quote">وَلَقَدْ يَسَّرْنَا الْقُرْآنَ لِلذِّكْرِ فَهَلْ مِن مُّدَّكِرٍ</div>
+
+    <div class="summary-row">
+      <div class="sum-card accent-green">
+        <div class="val" id="jm-mem">15</div>
+        <div class="lbl">Juz Memorized</div>
+      </div>
+      <div class="sum-card accent-gold">
+        <div class="val" id="jm-remain">15</div>
+        <div class="lbl">Juz Remaining</div>
+      </div>
+      <div class="sum-card">
+        <div class="val" id="jm-pages">604</div>
+        <div class="lbl">Total Pages</div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:20px">
+      <div class="card-header">
+        <div class="card-title"><div class="dot dot-emerald"></div> Juz Progress Map</div>
+        <div style="display:flex;gap:12px;font-size:12px;color:var(--text-muted)">
+          <span>🟢 Memorized</span>
+          <span>🟡 Partial</span>
+          <span>⬜ Remaining</span>
+        </div>
+      </div>
+      <div class="juz-map" id="juz-map"><!-- generated --></div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title"><div class="dot dot-gold"></div> Juz Details</div>
+      </div>
+      <div id="juz-detail-list" style="display:flex;flex-direction:column;gap:8px"><!-- generated --></div>
+    </div>
+  </div>
+
+  <!-- ===== SUMMARY PAGE ===== -->
+  <div class="page" id="page-summary">
+    <div class="inner-tabs">
+      <button class="inner-tab active" onclick="switchSummary('weekly')">Weekly</button>
+      <button class="inner-tab" onclick="switchSummary('monthly')">Monthly</button>
+      <button class="inner-tab" onclick="switchSummary('alltime')">All-Time</button>
+    </div>
+    <div id="summary-weekly" class="summary-view"><!-- generated --></div>
+    <div id="summary-monthly" class="summary-view" style="display:none"></div>
+    <div id="summary-alltime" class="summary-view" style="display:none"></div>
+  </div>
+
+  <!-- ===== MILESTONES PAGE ===== -->
+  <div class="page" id="page-milestones">
+    <div class="alert alert-info" style="margin-bottom:20px">
+      <span>🌟</span>
+      <span>Milestones are automatically calculated from your logged entries. Keep going — each step brings you closer to completing your blessed journey.</span>
+    </div>
+    <div class="milestones-grid" id="milestones-grid"><!-- generated --></div>
+  </div>
+</div>
+
+<!-- FAB -->
+<button class="fab" onclick="openLogModal()" title="Log Today">＋</button>
+
+<!-- LOG MODAL -->
+<div class="modal-overlay" id="modal-overlay" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <h3 id="modal-title">📖 New Log Entry</h3>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Date</label>
+        <input type="date" id="log-date">
+      </div>
+    </div>
+    <div style="font-weight:600;font-size:13px;color:var(--text-muted);margin-bottom:10px;text-transform:uppercase;letter-spacing:0.8px">New Hifz</div>
+    <div id="modal-session-time" style="display:none" class="session-time-display">
+      <span>⏱️</span> <span id="modal-session-time-text">Session: 0 min</span>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Page Number</label>
+        <input type="number" id="log-hifz-page" placeholder="e.g. 45" min="1" max="604">
+      </div>
+      <div class="form-group">
+        <label>Pages Done</label>
+        <input type="number" id="log-hifz-count" placeholder="e.g. 1" min="0" max="5" value="1">
+      </div>
+      <div class="form-group">
+        <label>Status</label>
+        <select id="log-hifz-status">
+          <option value="done">&#9989; Done</option>
+          <option value="partial">&#128993; Partial</option>
+          <option value="missed">&#10060; Missed</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group" style="margin-bottom:14px">
+      <label>Recitation Grade</label>
+      <div class="grade-select">
+        <button type="button" class="grade-opt" id="grade-A" onclick="selectGrade('A')">A</button>
+        <button type="button" class="grade-opt" id="grade-B" onclick="selectGrade('B')">B</button>
+        <button type="button" class="grade-opt" id="grade-C" onclick="selectGrade('C')">C</button>
+        <button type="button" class="grade-opt" id="grade-D" onclick="selectGrade('D')">D</button>
+        <button type="button" class="grade-opt" id="grade-E" onclick="selectGrade('E')">E</button>
+      </div>
+      <div class="grade-note" id="grade-note">A = Perfect · B = Near-perfect · C = Stumbled · D = Weak · E = Failed (triggers Correction task)</div>
+    </div>
+    <div style="font-weight:600;font-size:13px;color:var(--text-muted);margin-bottom:10px;text-transform:uppercase;letter-spacing:0.8px">Muraja'a (Review)</div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Pages Reviewed</label>
+        <input type="number" id="log-rev-count" placeholder="e.g. 4" min="0" max="50" value="4">
+      </div>
+      <div class="form-group">
+        <label>From Page</label>
+        <input type="number" id="log-rev-from" placeholder="start page" min="1" max="604">
+      </div>
+      <div class="form-group">
+        <label>Status</label>
+        <select id="log-rev-status">
+          <option value="done">✅ Done</option>
+          <option value="partial">🟡 Partial</option>
+          <option value="missed">❌ Missed</option>
+        </select>
+      </div>
+    </div>
+    <div style="font-weight:600;font-size:13px;color:var(--text-muted);margin-bottom:10px;text-transform:uppercase;letter-spacing:0.8px">Sheikh Reading</div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Pages Read</label>
+        <input type="number" id="log-sheikh-count" placeholder="e.g. 5" min="0" max="50" value="0">
+      </div>
+      <div class="form-group">
+        <label>From Page</label>
+        <input type="number" id="log-sheikh-from" placeholder="start page" min="1" max="604">
+      </div>
+      <div class="form-group">
+        <label>Status</label>
+        <select id="log-sheikh-status">
+          <option value="pending">— Not Today</option>
+          <option value="done">✅ Done</option>
+          <option value="partial">🟡 Partial</option>
+          <option value="missed">❌ Missed</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group" style="flex:1">
+        <label>Notes / Reflection</label>
+        <textarea id="log-notes" rows="3" placeholder="What went well? Any difficulties? Du'a or reflection..."></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-danger" id="modal-delete-btn" style="display:none;margin-right:auto">🗑️ Delete Entry</button>
+      <button class="btn btn-outline" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-gold" onclick="saveLogEntry()">Save Entry</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ====================================================
+//  DATA MODEL
+// ====================================================
+const JUZ_DATA = [
+  {juz:1, surah:'Al-Fatiha – Al-Baqarah 141', startPage:1, endPage:21, memorized:false, partial:false},
+  {juz:2, surah:'Al-Baqarah 142–252', startPage:22, endPage:41, memorized:false, partial:false},
+  {juz:3, surah:'Al-Baqarah 253 – Aal-Imran 91', startPage:42, endPage:62, memorized:false, partial:false},
+  {juz:4, surah:"Aal-Imran 92 – An-Nisa 23", startPage:63, endPage:81, memorized:false, partial:false},
+  {juz:5, surah:"An-Nisa 24–147", startPage:82, endPage:101, memorized:false, partial:false},
+  {juz:6, surah:"An-Nisa 148 – Al-Ma'idah 81", startPage:102, endPage:121, memorized:false, partial:false},
+  {juz:7, surah:"Al-Ma'idah 82 – Al-An'am 110", startPage:122, endPage:141, memorized:false, partial:false},
+  {juz:8, surah:"Al-An'am 111 – Al-A'raf 87", startPage:142, endPage:161, memorized:false, partial:false},
+  {juz:9, surah:"Al-A'raf 88 – Al-Anfal 40", startPage:162, endPage:181, memorized:false, partial:false},
+  {juz:10, surah:'Al-Anfal 41 – At-Tawbah 92', startPage:182, endPage:201, memorized:false, partial:false},
+  {juz:11, surah:'At-Tawbah 93 – Hud 5', startPage:202, endPage:221, memorized:false, partial:false},
+  {juz:12, surah:'Hud 6 – Yusuf 52', startPage:222, endPage:241, memorized:false, partial:false},
+  {juz:13, surah:"Yusuf 53 – Ibrahim 52", startPage:242, endPage:261, memorized:false, partial:false},
+  {juz:14, surah:"Al-Hijr – An-Nahl 128", startPage:262, endPage:281, memorized:false, partial:false},
+  {juz:15, surah:"Al-Isra 1–98", startPage:282, endPage:301, memorized:false, partial:true},
+  {juz:16, surah:'Al-Kahf – Ta-Ha 135', startPage:302, endPage:321, memorized:true, partial:false},
+  {juz:17, surah:'Ta-Ha 136 – Al-Anbiya 112', startPage:322, endPage:341, memorized:true, partial:false},
+  {juz:18, surah:"Al-Mu'minun – Al-Furqan 20", startPage:342, endPage:361, memorized:true, partial:false},
+  {juz:19, surah:"Al-Furqan 21 – An-Naml 55", startPage:362, endPage:381, memorized:true, partial:false},
+  {juz:20, surah:"An-Naml 56 – Al-Ankabut 45", startPage:382, endPage:401, memorized:true, partial:false},
+  {juz:21, surah:"Al-Ankabut 46 – Al-Ahzab 30", startPage:402, endPage:421, memorized:true, partial:false},
+  {juz:22, surah:"Al-Ahzab 31 – Ya-Sin 27", startPage:422, endPage:441, memorized:true, partial:false},
+  {juz:23, surah:'Ya-Sin 28 – Az-Zumar 31', startPage:442, endPage:461, memorized:true, partial:false},
+  {juz:24, surah:'Az-Zumar 32 – Fussilat 46', startPage:462, endPage:481, memorized:true, partial:false},
+  {juz:25, surah:'Fussilat 47 – Al-Jathiya 37', startPage:482, endPage:499, memorized:true, partial:false},
+  {juz:26, surah:'Al-Ahqaf – Adh-Dhariyat 30', startPage:500, endPage:517, memorized:true, partial:false},
+  {juz:27, surah:'Adh-Dhariyat 31 – Al-Hadid', startPage:518, endPage:537, memorized:true, partial:false},
+  {juz:28, surah:'Al-Mujadila – At-Tahrim', startPage:538, endPage:556, memorized:true, partial:false},
+  {juz:29, surah:'Al-Mulk – Al-Mursalat', startPage:557, endPage:576, memorized:true, partial:false},
+  {juz:30, surah:"An-Naba – An-Nas", startPage:577, endPage:604, memorized:true, partial:false},
+];
+
+const MILESTONES = [
+  {id:'juz30', name:"Juz 30 Complete", icon:"🌟", type:'juz', target:30, detail:"Al-Naba → An-Nas"},
+  {id:'juz29', name:"Juz 29 Complete", icon:"📚", type:'juz', target:29, detail:"Al-Mulk → Al-Mursalat"},
+  {id:'juz1', name:"Juz 1 Memorized", icon:"🌱", type:'mem_juz', target:1, detail:"Al-Fatiha → Al-Baqarah 141"},
+  {id:'baqara', name:"Surah Al-Baqarah", icon:"🏛️", type:'page_mem', target:49, detail:"Longest Surah — pages 2–49"},
+  {id:'aal_imran', name:"Surah Aal-Imran", icon:"📖", type:'page_mem', target:76, detail:"Pages 50–76"},
+  {id:'half', name:"Halfway Done!", icon:"⭐", type:'page_mem', target:156, detail:"Juz 15 — page 301 reached"},
+  {id:'isra', name:"Surah Al-Isra", icon:"🌙", type:'page_mem', target:301, detail:"Final missing Surah"},
+  {id:'full_hifz', name:"Full Quran Memorized!", icon:"🏆", type:'page_mem', target:604, detail:"All 604 pages complete"},
+  {id:'khatma', name:"Full Khatma on Sheikh", icon:"🎙️", type:'sheikh', target:604, detail:"All 604 pages read on Sheikh"},
+  {id:'streak7', name:"7-Day Streak", icon:"🔥", type:'streak', target:7, detail:"7 consecutive days"},
+  {id:'streak30', name:"30-Day Streak", icon:"💎", type:'streak', target:30, detail:"30 consecutive days"},
+  {id:'streak100', name:"100-Day Warrior", icon:"🦅", type:'streak', target:100, detail:"100 consecutive days"},
+];
+
+// ====================================================
+//  STATE
+// ====================================================
+let state = {
+  log: [],
+  juzStatus: JUZ_DATA.map(j => ({juz:j.juz, memorized:j.memorized, partial:j.partial})),
+};
+
+function loadState() {
+  try {
+    const s = localStorage.getItem('quran_tracker_v2');
+    if (s) state = JSON.parse(s);
+  } catch(e) {}
+}
+function saveState() {
+  try { localStorage.setItem('quran_tracker_v2', JSON.stringify(state)); } catch(e) {}
+}
+
+// ====================================================
+//  TIMER  (Feature 1: Triple-Mode Session Timer)
+// ====================================================
+let timerState = {
+  running: false,
+  elapsed: { hifz: 0, review: 0, manzil: 0 },
+  currentMode: 'hifz',
+  lastTick: null,
+  interval: null,
+  totalLoggedMin: 0
+};
+
+function setTimerMode(mode) {
+  if (timerState.running) {
+    const now = Date.now();
+    timerState.elapsed[timerState.currentMode] += now - timerState.lastTick;
+    timerState.lastTick = now;
+  }
+  timerState.currentMode = mode;
+  document.querySelectorAll('.timer-mode-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tmode-' + mode).classList.add('active');
+}
+
+function toggleTimer() {
+  if (!timerState.running) {
+    timerState.running = true;
+    timerState.lastTick = Date.now();
+    timerState.interval = setInterval(tickTimer, 500);
+    document.getElementById('timer-start-btn').textContent = '⏸ Pause';
+    document.getElementById('timer-log-btn').style.display = '';
+    document.getElementById('timer-reset-btn').style.display = '';
+    document.getElementById('timer-display').classList.add('running');
+  } else {
+    const now = Date.now();
+    timerState.elapsed[timerState.currentMode] += now - timerState.lastTick;
+    timerState.running = false;
+    clearInterval(timerState.interval);
+    document.getElementById('timer-start-btn').textContent = '▶ Resume';
+    document.getElementById('timer-display').classList.remove('running');
+  }
+  renderTimerBreakdown();
+}
+
+function tickTimer() {
+  if (!timerState.running) return;
+  const now = Date.now();
+  timerState.elapsed[timerState.currentMode] += now - timerState.lastTick;
+  timerState.lastTick = now;
+  const total = timerState.elapsed.hifz + timerState.elapsed.review + timerState.elapsed.manzil;
+  const totalSec = Math.floor(total / 1000);
+  const mm = String(Math.floor(totalSec / 60)).padStart(2, '0');
+  const ss = String(totalSec % 60).padStart(2, '0');
+  document.getElementById('timer-display').textContent = mm + ':' + ss;
+  renderTimerBreakdown();
+}
+
+function renderTimerBreakdown() {
+  const e = timerState.elapsed;
+  const fmtMs = ms => { const s = Math.floor(ms/1000); const m = Math.floor(s/60); const sec = s%60; return m > 0 ? m + 'm ' + sec + 's' : sec + 's'; };
+  const totalMs = e.hifz + e.review + e.manzil;
+  const revMs = e.review + e.manzil;
+  let ratioHtml = '';
+  if (e.hifz > 0 && revMs > 0) {
+    const ratio = revMs / e.hifz;
+    const good = ratio >= 1.5;
+    const ratioStr = ratio.toFixed(1) + ':1 Rev:Hifz';
+    ratioHtml = `<span class="timer-ratio ${good ? 'good' : ''}" title="Target: 2:1 Review to Hifz">${ratioStr} ${good ? '✓' : '⚠️'}</span>`;
+  }
+  document.getElementById('timer-breakdown').innerHTML = `
+    <span class="tbr-item" style="color:var(--gold-dark)">📖 ${fmtMs(e.hifz)}</span>
+    <span class="tbr-item" style="color:var(--emerald)">🔁 ${fmtMs(e.review)}</span>
+    <span class="tbr-item" style="color:#2471A3">📚 ${fmtMs(e.manzil)}</span>
+    ${ratioHtml}
+  `;
+}
+
+function resetTimer() {
+  if (timerState.running) {
+    clearInterval(timerState.interval);
+    timerState.running = false;
+  }
+  timerState.elapsed = { hifz: 0, review: 0, manzil: 0 };
+  timerState.lastTick = null;
+  document.getElementById('timer-display').textContent = '00:00';
+  document.getElementById('timer-display').classList.remove('running');
+  document.getElementById('timer-start-btn').textContent = '▶ Start';
+  document.getElementById('timer-log-btn').style.display = 'none';
+  document.getElementById('timer-reset-btn').style.display = 'none';
+  renderTimerBreakdown();
+}
+
+function stopAndLog() {
+  if (timerState.running) {
+    const now = Date.now();
+    timerState.elapsed[timerState.currentMode] += now - timerState.lastTick;
+    timerState.running = false;
+    clearInterval(timerState.interval);
+  }
+  const totalMs = timerState.elapsed.hifz + timerState.elapsed.review + timerState.elapsed.manzil;
+  timerState.totalLoggedMin = Math.round(totalMs / 60000);
+  document.getElementById('timer-start-btn').textContent = '▶ Start';
+  document.getElementById('timer-display').classList.remove('running');
+  openLogModal(timerState.totalLoggedMin);
+}
+
+// ====================================================
+//  GRADE SYSTEM  (Feature 2: Quality Grading A-E)
+// ====================================================
+let selectedGrade = '';
+
+function selectGrade(g) {
+  selectedGrade = g;
+  ['A','B','C','D','E'].forEach(gr => {
+    const btn = document.getElementById('grade-' + gr);
+    btn.className = 'grade-opt' + (gr === g ? ' sel-' + gr : '');
+  });
+  const notes = {
+    A: 'Perfect recitation — you may confidently progress to the next page.',
+    B: 'Near-perfect — small hesitations. Progress allowed.',
+    C: 'Multiple stumbles — passed, but this page enters close SRS monitoring.',
+    D: 'Weak recitation — a Correction Required task will appear tomorrow.',
+    E: 'Failed — page is blocked until re-logged with a passing grade.'
+  };
+  document.getElementById('grade-note').textContent = notes[g] || 'A = Perfect · B = Near-perfect · C = Stumbled · D = Weak · E = Failed';
+}
+
+function getCorrectionTasks() {
+  return state.log.filter(e => (e.hifzGrade === 'D' || e.hifzGrade === 'E') && !e.correctionDone);
+}
+
+function markCorrectionDone(dateStr) {
+  const e = state.log.find(x => x.date === dateStr);
+  if (e) { e.correctionDone = true; saveState(); renderAll(); }
+}
+
+function deleteEntry(dateStr) {
+  if (!confirm('Delete entry for ' + formatDate(dateStr) + '?\n\nThis cannot be undone.')) return;
+  state.log = state.log.filter(e => e.date !== dateStr);
+  saveState();
+  renderLog();
+  renderAll();
+}
+
+// ====================================================
+//  SRS ENGINE  (Feature 3: Automated Spaced Repetition)
+// ====================================================
+const SRS_INTERVALS = [3, 7, 14, 30];
+
+function getSRSTasks() {
+  const todayStr = today();
+  const todayD = new Date(todayStr + 'T00:00:00');
+  const tasks = [];
+  SRS_INTERVALS.forEach(days => {
+    const targetD = new Date(todayD);
+    targetD.setDate(todayD.getDate() - days);
+    const targetStr = targetD.toISOString().split('T')[0];
+    const entry = getLogEntry(targetStr);
+    if (entry && entry.hifzPage && (entry.hifzStatus === 'done' || entry.hifzStatus === 'partial')) {
+      tasks.push({ page: entry.hifzPage, daysAgo: days, date: targetStr, grade: entry.hifzGrade || '' });
+    }
+  });
+  // Deduplicate by page
+  const seen = new Set();
+  return tasks.filter(t => { if (seen.has(t.page)) return false; seen.add(t.page); return true; });
+}
+
+// ====================================================
+//  MANZIL ROTATION  (Feature 4: 15-Day Cycle)
+// ====================================================
+function getMemorizedJuzList() {
+  // Returns juz numbers that are fully memorized, in ascending order
+  return state.juzStatus
+    .filter(j => j.memorized)
+    .map(j => j.juz)
+    .sort((a, b) => a - b);
+}
+
+function getTodayManzilJuz() {
+  const memorized = getMemorizedJuzList();
+  if (memorized.length === 0) return null;
+  const epoch = new Date('2025-01-01T00:00:00');
+  const now = new Date();
+  const dayNum = Math.floor((now - epoch) / (1000 * 60 * 60 * 24));
+  return memorized[dayNum % memorized.length];
+}
+
+function getTodayManzilInfo() {
+  const juzNum = getTodayManzilJuz();
+  if (!juzNum) return null;
+  return JUZ_DATA[juzNum - 1];
+}
+
+// ====================================================
+//  JOURNEY INTELLIGENCE  (Feature 5)
+// ====================================================
+function getActualPace() {
+  const todayD = new Date();
+  let total = 0;
+  for (let i = 1; i <= 14; i++) {
+    const d = new Date(todayD);
+    d.setDate(todayD.getDate() - i);
+    const ds = d.toISOString().split('T')[0];
+    const e = getLogEntry(ds);
+    if (e && e.hifzStatus === 'done') total += (e.hifzCount || 1);
+  }
+  return total / 14;
+}
+
+function getEstimatedFinishDate() {
+  const pace = getActualPace();
+  const totalMem = getTotalMemorized();
+  const remaining = Math.max(0, 312 - totalMem);
+  if (pace <= 0) return null;
+  if (remaining === 0) return new Date();
+  const daysLeft = Math.ceil(remaining / pace);
+  const finish = new Date();
+  finish.setDate(finish.getDate() + daysLeft);
+  return finish;
+}
+
+function getTotalDelays() {
+  const missed = state.log.filter(e => e.hifzStatus === 'missed').length;
+  const gradeE = state.log.filter(e => e.hifzGrade === 'E').length;
+  return missed + gradeE;
+}
+
+// ====================================================
+//  UTILITIES
+// ====================================================
+function today() {
+  return new Date().toISOString().split('T')[0];
+}
+
+function formatDate(isoStr) {
+  const d = new Date(isoStr + 'T00:00:00');
+  return d.toLocaleDateString('en-GB', {weekday:'short', day:'numeric', month:'short', year:'numeric'});
+}
+
+function getWeekDates() {
+  const d = new Date();
+  const day = d.getDay();
+  const mon = new Date(d);
+  mon.setDate(d.getDate() - ((day + 6) % 7));
+  const week = [];
+  for (let i = 0; i < 7; i++) {
+    const dd = new Date(mon);
+    dd.setDate(mon.getDate() + i);
+    week.push(dd.toISOString().split('T')[0]);
+  }
+  return week;
+}
+
+function getLogEntry(dateStr) {
+  return state.log.find(e => e.date === dateStr) || null;
+}
+
+function getTotalMemorized() {
+  return state.log.reduce((sum, e) => sum + (e.hifzStatus === 'done' ? (e.hifzCount||1) : e.hifzStatus === 'partial' ? 0.5 : 0), 0);
+}
+
+function getTotalReviewed() {
+  return state.log.reduce((sum, e) => sum + (e.revStatus === 'done' || e.revStatus === 'partial' ? (e.revCount||0) : 0), 0);
+}
+
+function getTotalSheikh() {
+  return state.log.reduce((sum, e) => sum + (e.sheikhStatus === 'done' || e.sheikhStatus === 'partial' ? (e.sheikhCount||0) : 0), 0);
+}
+
+function getCurrentStreak() {
+  let streak = 0;
+  let d = new Date();
+  while (true) {
+    const ds = d.toISOString().split('T')[0];
+    const e = getLogEntry(ds);
+    if (e && (e.hifzStatus === 'done' || e.revStatus === 'done')) {
+      streak++;
+      d.setDate(d.getDate() - 1);
+    } else if (ds === today() && !e) {
+      d.setDate(d.getDate() - 1);
+    } else break;
+  }
+  return streak;
+}
+
+// Feature 6: Active Gap Targeting
+// Sequence: Al-Isra (pp.282–301) first, then Juz 14→13→...→1 chronologically
+function buildHifzSequence() {
+  const seq = [];
+  // Phase 1: Complete Al-Isra (Juz 15), pages 282–301
+  for (let p = 282; p <= 301; p++) seq.push(p);
+  // Phase 2+: Juz 14 down to Juz 1, each Juz in forward page order
+  for (let juz = 14; juz >= 1; juz--) {
+    const info = JUZ_DATA[juz - 1];
+    for (let p = info.startPage; p <= info.endPage; p++) seq.push(p);
+  }
+  return seq; // 301 pages total
+}
+
+function getTodayHifzPage() {
+  const seq = buildHifzSequence();
+  const done = Math.floor(state.log.reduce((s, e) => s + (e.hifzStatus === 'done' ? (e.hifzCount||1) : 0), 0));
+  return seq[Math.min(done, seq.length - 1)];
+}
+
+function getCurrentHifzPhase() {
+  const seq = buildHifzSequence();
+  const done = Math.floor(state.log.reduce((s, e) => s + (e.hifzStatus === 'done' ? (e.hifzCount||1) : 0), 0));
+  const page = seq[Math.min(done, seq.length - 1)];
+  const juzInfo = JUZ_DATA.find(j => page >= j.startPage && page <= j.endPage);
+  return juzInfo || null;
+}
+
+function isBridgeComplete() {
+  const done = Math.floor(state.log.reduce((s, e) => s + (e.hifzStatus === 'done' ? (e.hifzCount||1) : 0), 0));
+  return done >= 301;
+}
+
+function getTodayRevPage() {
+  const total = getTotalReviewed();
+  return (Math.floor(total) % 604) + 1;
+}
+
+function getCatchups() {
+  const missed = state.log.filter(e => e.hifzStatus === 'missed' || e.revStatus === 'missed');
+  return missed.slice(-5);
+}
+
+// ====================================================
+//  RENDER FUNCTIONS
+// ====================================================
+function renderHeader() {
+  const totalMem = Math.round(getTotalMemorized());
+  const streak = getCurrentStreak();
+  const pct = Math.min(100, Math.round((totalMem / 312) * 100));
+  document.getElementById('h-total-mem').textContent = totalMem;
+  document.getElementById('h-streak').textContent = streak;
+  document.getElementById('h-pct').textContent = pct + '%';
+}
+
+function renderToday() {
+  const d = new Date();
+  const days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  document.getElementById('today-full-date').textContent =
+    days[d.getDay()] + ', ' + d.getDate() + ' ' + months[d.getMonth()] + ' ' + d.getFullYear();
+  document.getElementById('today-day-num').textContent = d.getDate();
+  document.getElementById('today-day-name').textContent = months[d.getMonth()];
+
+  const totalMem = Math.round(getTotalMemorized());
+  const totalRev = getTotalReviewed();
+  const totalSh = getTotalSheikh();
+  const streak = getCurrentStreak();
+
+  document.getElementById('pb-hifz').style.width = Math.min(100, (totalMem/312)*100) + '%';
+  document.getElementById('pb-hifz-txt').textContent = totalMem + ' / 312 pages';
+  document.getElementById('pb-muraja').style.width = Math.min(100, (totalRev/604)*100) + '%';
+  document.getElementById('pb-muraja-txt').textContent = totalRev + ' / 604 pages';
+  document.getElementById('pb-sheikh').style.width = Math.min(100, (totalSh/604)*100) + '%';
+  document.getElementById('pb-sheikh-txt').textContent = totalSh + ' / 604 pages';
+
+  document.getElementById('stat-new-mem').textContent = totalMem;
+  document.getElementById('stat-total-rev').textContent = totalRev;
+  document.getElementById('stat-sheikh-pages').textContent = totalSh;
+  document.getElementById('stat-streak').textContent = streak + ' 🔥';
+
+  // Journey Intelligence
+  const pace = getActualPace();
+  const delays = getTotalDelays();
+  const remaining = Math.max(0, 312 - totalMem);
+  const weeksLeft = pace > 0 ? Math.ceil(remaining / (pace * 7)) : null;
+  const finishDate = getEstimatedFinishDate();
+
+  document.getElementById('ji-pace').textContent = pace > 0 ? pace.toFixed(2) : '—';
+  document.getElementById('ji-pace').className = 'intel-val ' + (pace >= 0.14 ? 'good' : pace > 0 ? '' : '');
+  document.getElementById('ji-delays').textContent = delays;
+  document.getElementById('ji-delays').className = 'intel-val ' + (delays > 5 ? 'warn' : '');
+  document.getElementById('ji-weeks').textContent = weeksLeft !== null ? weeksLeft : '—';
+
+  if (finishDate && remaining > 0) {
+    const opts = {day:'numeric', month:'long', year:'numeric'};
+    document.getElementById('ji-finish-text').innerHTML =
+      'Est. finish: <strong>' + finishDate.toLocaleDateString('en-GB', opts) + '</strong>' +
+      (delays > 0 ? ' &nbsp;·&nbsp; ⚠️ ' + delays + ' delay day(s) pushing this further' : ' ✓ On track!');
+  } else if (remaining === 0) {
+    document.getElementById('ji-finish-text').innerHTML = '🏆 <strong>Bridge Complete! All 301 pages memorized!</strong>';
+  } else {
+    document.getElementById('ji-finish-text').textContent = 'Log more days to calculate your finish date';
+  }
+
+  // Bridge Complete Banner
+  const bridgeBanner = document.getElementById('bridge-banner');
+  if (isBridgeComplete()) {
+    bridgeBanner.style.display = '';
+    bridgeBanner.innerHTML = `<div class="bridge-alert">
+      <div class="bridge-title">🌟 بِسْمِ اللهِ 🌟 — Bridge Complete!</div>
+      <div class="bridge-sub">Alhamdulillah! Pages 1–301 are memorized. Your Quran is now unified. May Allah make it firm in your heart.</div>
+    </div>`;
+  } else {
+    bridgeBanner.style.display = 'none';
+  }
+
+  renderTaskList();
+  renderWeekGrid();
+  renderCatchup();
+}
+
+function renderTaskList() {
+  const todayStr = today();
+  const entry = getLogEntry(todayStr);
+  const hifzPage = entry ? (entry.hifzPage || getTodayHifzPage()) : getTodayHifzPage();
+  const hifzStatus = entry ? entry.hifzStatus : 'pending';
+  const revStatus = entry ? entry.revStatus : 'pending';
+  const sheikhStatus = entry ? entry.sheikhStatus : 'pending';
+  const revFrom = entry ? (entry.revFrom || getTodayRevPage()) : getTodayRevPage();
+  const revCount = entry ? (entry.revCount || 4) : 4;
+  const sheikhFrom = entry ? (entry.sheikhFrom || 1) : 1;
+  const sheikhCount = entry ? (entry.sheikhCount || 0) : 0;
+  const hifzGrade = entry ? (entry.hifzGrade || '') : '';
+
+  const statusLabels = { done: '✅ Done', partial: '🟡 Partial', missed: '❌ Missed', pending: '— Pending' };
+  const statusCls = { done: 'status-done', partial: 'status-partial', missed: 'status-missed', pending: 'status-pending' };
+
+  const gradeHtml = g => g ? `<span class="grade-badge grade-${g}" title="Grade ${g}">${g}</span>` : '';
+
+  let html = '';
+
+  // CORRECTION REQUIRED tasks (Feature 2: Penalty for D/E grades)
+  const corrections = getCorrectionTasks();
+  corrections.forEach(c => {
+    html += `<div class="task-item correction-task">
+      <div class="task-icon hifz" style="background:var(--missed-bg)">⚠️</div>
+      <div class="task-body">
+        <div class="task-track" style="color:var(--missed)"><span class="correction-badge">CORRECTION REQUIRED</span></div>
+        <div class="task-desc">Page ${c.hifzPage || '?'} — Re-memorize &amp; re-log with Grade C or above</div>
+        <div class="task-meta">Logged ${formatDate(c.date)} · Grade ${c.hifzGrade} logged · Must be re-done to unblock progress</div>
+      </div>
+      <div class="task-status">
+        <button class="btn btn-sm btn-outline" onclick="markCorrectionDone('${c.date}')" style="border-color:var(--missed);color:var(--missed)">Mark Fixed</button>
+      </div>
+    </div>`;
+  });
+
+  // MAIN HIFZ TASK — sequence: Al-Isra (282-301) then Juz 14 → 1
+  const phase = getCurrentHifzPhase();
+  const phaseNote = phase ? 'Juz ' + phase.juz + ' — ' + phase.surah.split('–')[0].trim() : 'Target Zone';
+  html += `<div class="task-item">
+    <div class="task-icon hifz">📖</div>
+    <div class="task-body">
+      <div class="task-track track-hifz">New Hifz ${gradeHtml(hifzGrade)}</div>
+      <div class="task-desc">Page ${hifzPage} — New Memorization</div>
+      <div class="task-meta">~35–45 min · Listen → Memorize · ${phaseNote}</div>
+    </div>
+    <div class="task-status">
+      <span class="status-btn ${statusCls[hifzStatus]}">${statusLabels[hifzStatus]}</span>
+    </div>
+  </div>`;
+
+  // SHEIKH TASK
+  html += `<div class="task-item">
+    <div class="task-icon sheikh">🎙️</div>
+    <div class="task-body">
+      <div class="task-track track-sheikh">Sheikh Reading</div>
+      <div class="task-desc">${sheikhCount > 0 ? 'Pages ' + sheikhFrom + '–' + (sheikhFrom + sheikhCount - 1) : 'Sheikh session (if scheduled today)'}</div>
+      <div class="task-meta">~10 pages per session · Hifz correction with Sheikh</div>
+    </div>
+    <div class="task-status">
+      <span class="status-btn ${statusCls[sheikhStatus]}">${statusLabels[sheikhStatus]}</span>
+    </div>
+  </div>`;
+
+  // MANZIL ROTATION TASK (Feature 4) — all memorized Juz, dynamic cycle
+  const manzilInfo = getTodayManzilInfo();
+  const memorizedJuzList = getMemorizedJuzList();
+  if (manzilInfo) {
+    html += `<div class="task-item manzil-task">
+      <div class="task-icon sheikh" style="background:rgba(74,159,212,0.12)">📚</div>
+      <div class="task-body">
+        <div class="task-track" style="color:#2471A3">Manzil Rotation — Juz ${manzilInfo.juz} of 30 <span style="font-size:10px;opacity:0.7">(${memorizedJuzList.length}-Juz cycle)</span></div>
+        <div class="task-desc">${manzilInfo.surah}</div>
+        <div class="task-meta">pp.${manzilInfo.startPage}–${manzilInfo.endPage} · Every new Juz you memorize joins this cycle automatically</div>
+      </div>
+      <div class="task-status">
+        <span class="status-btn status-pending">Guard</span>
+      </div>
+    </div>`;
+  }
+
+  // SRS REVIEW TASKS (Feature 3) — this IS the review system
+  const srsTasks = getSRSTasks();
+  if (srsTasks.length === 0) {
+    html += `<div class="task-item srs-task" style="opacity:0.65">
+      <div class="task-icon muraja" style="background:rgba(26,107,74,0.10)">🧠</div>
+      <div class="task-body">
+        <div class="task-track track-muraja"><span class="srs-badge">SRS Queue</span></div>
+        <div class="task-desc">No repetitions due today</div>
+        <div class="task-meta">Pages appear here on days 3 · 7 · 14 · 30 after memorization</div>
+      </div>
+      <div class="task-status"><span class="status-btn status-done">Clear ✓</span></div>
+    </div>`;
+  } else {
+    srsTasks.forEach(t => {
+      const intervalLabel = { 3:'3-Day', 7:'7-Day', 14:'14-Day', 30:'30-Day' }[t.daysAgo] || t.daysAgo+'-Day';
+      const repNum = { 3:'1st', 7:'2nd', 14:'3rd', 30:'4th' }[t.daysAgo] || '';
+      html += `<div class="task-item srs-task">
+        <div class="task-icon muraja" style="background:rgba(26,107,74,0.14)">🧠</div>
+        <div class="task-body">
+          <div class="task-track track-muraja"><span class="srs-badge">SRS ${intervalLabel}</span></div>
+          <div class="task-desc">Page ${t.page} — ${repNum} Repetition</div>
+          <div class="task-meta">Memorized ${formatDate(t.date)} · Recite from memory without looking</div>
+        </div>
+        <div class="task-status">
+          <span class="status-btn status-pending">Review</span>
+        </div>
+      </div>`;
+    });
+  }
+
+  document.getElementById('task-list').innerHTML = html;
+}
+
+// Feature 7: Enhanced Weekly Mini-Grid
+function renderWeekGrid() {
+  const week = getWeekDates();
+  const todayStr = today();
+  const dayNames = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+  let html = '';
+  week.forEach((ds, i) => {
+    const entry = getLogEntry(ds);
+    const d = new Date(ds + 'T00:00:00');
+    const isToday = ds === todayStr;
+    const isFuture = ds > todayStr;
+    let cls = '';
+    let dots = [null, null, null];
+    let gradeHtml = '';
+    if (entry && !isFuture) {
+      dots[0] = entry.hifzStatus;
+      dots[1] = entry.revStatus;
+      dots[2] = entry.sheikhStatus === 'pending' ? null : entry.sheikhStatus;
+      const allDone = entry.hifzStatus === 'done' && entry.revStatus === 'done';
+      const anyMissed = entry.hifzStatus === 'missed' || entry.revStatus === 'missed';
+      cls = allDone ? 'status-all-done' : anyMissed ? 'status-missed-any' : 'status-partial';
+      if (entry.hifzGrade) gradeHtml = `<div style="font-size:9px;font-weight:700;color:${entry.hifzGrade === 'A' || entry.hifzGrade === 'B' ? 'var(--done)' : entry.hifzGrade === 'C' ? '#8B6914' : 'var(--missed)'}">${entry.hifzGrade}</div>`;
+    } else if (!isFuture && !entry) {
+      // Past day, no entry — show as a "hole" (visual guilt)
+      cls = 'status-missed-any';
+    }
+    const dotCls = (s) => s === 'done' ? 'done' : s === 'partial' ? 'partial' : s === 'missed' ? 'missed' : '';
+    html += `<div class="day-cell ${isToday ? 'today' : ''} ${cls}" onclick="openLogModalForDate('${ds}')">
+      <div class="day-name">${dayNames[i]}</div>
+      <div class="day-num">${d.getDate()}</div>
+      ${gradeHtml}
+      <div class="day-dots">
+        ${dots.map(s => `<div class="day-dot ${s ? dotCls(s) : ''}"></div>`).join('')}
+      </div>
+    </div>`;
+  });
+  document.getElementById('week-grid').innerHTML = html;
+
+  const w0 = new Date(week[0]+'T00:00:00');
+  const w6 = new Date(week[6]+'T00:00:00');
+  document.getElementById('week-range-lbl').textContent =
+    w0.toLocaleDateString('en-GB',{day:'numeric',month:'short'}) + ' – ' +
+    w6.toLocaleDateString('en-GB',{day:'numeric',month:'short'});
+}
+
+function renderCatchup() {
+  const missed = state.log.filter(e => e.hifzStatus === 'missed' || e.revStatus === 'missed');
+  let html = '';
+  if (missed.length > 0) {
+    html = `<div class="alert alert-warn">
+      ⚠️ <strong>${missed.length} day(s)</strong> have missed tasks. Log a catch-up entry to redistribute the missed pages across upcoming days.
+      <button class="btn btn-outline btn-sm" style="margin-left:auto" onclick="switchPage('log')">View Missed Days →</button>
+    </div>`;
+  }
+  document.getElementById('catchup-area').innerHTML = html;
+}
+
+function renderLog() {
+  const filter = document.getElementById('log-filter').value;
+  const todayStr = today();
+  let entries = [...state.log].reverse();
+  if (filter !== 'all') {
+    entries = entries.filter(e => {
+      if (filter === 'missed') return e.hifzStatus === 'missed' || e.revStatus === 'missed';
+      if (filter === 'partial') return e.hifzStatus === 'partial' || e.revStatus === 'partial';
+      if (filter === 'done') return e.hifzStatus === 'done' && e.revStatus === 'done';
+      return true;
+    });
+  }
+
+  const badgeFn = (s) => {
+    const map = {done:'badge-done',partial:'badge-partial',missed:'badge-missed',pending:'badge-pending'};
+    const lbl = {done:'Done',partial:'Partial',missed:'Missed',pending:'—'};
+    return `<span class="badge ${map[s]||'badge-pending'}">${lbl[s]||s}</span>`;
+  };
+  const gradeBadge = g => g ? `<span class="grade-badge grade-${g}" style="margin-left:4px">${g}</span>` : '';
+
+  const tbody = entries.map(e => {
+    const isToday = e.date === todayStr;
+    const correction = (e.hifzGrade === 'D' || e.hifzGrade === 'E') && !e.correctionDone
+      ? '<span class="correction-badge" style="margin-left:4px">FIX</span>' : '';
+    return `<tr class="${isToday ? 'today-row' : ''}">
+      <td><strong>${formatDate(e.date)}</strong>${isToday?' <span style="color:var(--gold);font-size:11px">TODAY</span>':''}</td>
+      <td>${e.hifzPage ? 'p.' + e.hifzPage + ' ×' + (e.hifzCount||1) : '—'}${gradeBadge(e.hifzGrade)}${correction}</td>
+      <td>${e.revFrom ? 'p.' + e.revFrom + ' ×' + (e.revCount||0) : (e.revCount||0) + ' pages'}</td>
+      <td>${e.sheikhFrom ? 'p.' + e.sheikhFrom + ' ×' + (e.sheikhCount||0) : (e.sheikhCount||0) + ' pages'}</td>
+      <td>${badgeFn(e.hifzStatus)}</td>
+      <td>${badgeFn(e.revStatus)}</td>
+      <td>${badgeFn(e.sheikhStatus)}</td>
+      <td style="max-width:160px;font-size:12px;color:var(--text-muted)">${e.notes||'—'}</td>
+      <td style="white-space:nowrap;display:flex;gap:4px;align-items:center">
+        <button class="btn btn-sm btn-outline" onclick="editEntry('${e.date}')" title="Edit this entry">✏️</button>
+        <button class="btn btn-sm btn-danger" onclick="deleteEntry('${e.date}')" title="Delete this entry">🗑️</button>
+      </td>
+    </tr>`;
+  }).join('');
+
+  document.getElementById('log-tbody').innerHTML = tbody || '<tr><td colspan="9" style="text-align:center;color:var(--text-muted);padding:20px">No entries yet. Start logging your progress!</td></tr>';
+}
+
+function renderJuzMap() {
+  const memorizedCount = state.juzStatus.filter(j => j.memorized).length;
+  const remainingCount = state.juzStatus.filter(j => !j.memorized).length;
+  document.getElementById('jm-mem').textContent = memorizedCount;
+  document.getElementById('jm-remain').textContent = remainingCount;
+
+  const html = state.juzStatus.map(j => {
+    const cls = j.memorized ? 'memorized' : j.partial ? 'partial-mem' : 'remaining';
+    const juzInfo = JUZ_DATA[j.juz - 1];
+    const isManzilToday = j.juz === getTodayManzilJuz();
+    return `<div class="juz-cell ${cls}" title="Juz ${j.juz}: ${juzInfo.surah}${isManzilToday ? ' — TODAY\'S MANZIL' : ''}" onclick="toggleJuz(${j.juz})" style="${isManzilToday ? 'outline:2px solid #4A9FD4;outline-offset:2px' : ''}">
+      <div class="juz-num">${j.juz}</div>
+      <div class="juz-label">${j.memorized ? '✓' : j.partial ? '◑' : '○'}${isManzilToday ? '📚' : ''}</div>
+    </div>`;
+  }).join('');
+  document.getElementById('juz-map').innerHTML = html;
+
+  const detail = state.juzStatus.map(j => {
+    const juzInfo = JUZ_DATA[j.juz - 1];
+    const cls = j.memorized ? 'memorized' : j.partial ? 'partial-mem' : 'remaining';
+    const clrMap = {memorized:'var(--done)', 'partial-mem':'var(--gold)', remaining:'var(--text-muted)'};
+    const lbl = j.memorized ? 'Memorized' : j.partial ? 'Partial' : 'Remaining';
+    const isManzilToday = j.juz === getTodayManzilJuz();
+    return `<div style="display:flex;align-items:center;gap:12px;padding:8px 12px;border-radius:8px;background:${isManzilToday ? 'rgba(74,159,212,0.06)' : 'var(--parchment)'};border:1px solid ${isManzilToday ? 'rgba(74,159,212,0.3)' : 'var(--border)'}">
+      <div style="width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;background:${j.memorized?'var(--done-bg)':j.partial?'var(--partial-bg)':'var(--parchment-dark)'};color:${clrMap[cls]}">
+        ${j.juz}
+      </div>
+      <div style="flex:1">
+        <div style="font-size:13px;font-weight:600;color:var(--text-main)">Juz ${j.juz}${isManzilToday ? ' <span style="font-size:11px;color:#2471A3;font-weight:700">— TODAY\'S MANZIL 📚</span>' : ''}</div>
+        <div style="font-size:12px;color:var(--text-muted)">${juzInfo.surah} · p.${juzInfo.startPage}–${juzInfo.endPage}</div>
+      </div>
+      <span class="badge ${j.memorized?'badge-done':j.partial?'badge-partial':'badge-pending'}">${lbl}</span>
+      <button class="btn btn-sm btn-outline" onclick="toggleJuz(${j.juz})" style="font-size:11px">Toggle</button>
+    </div>`;
+  }).join('');
+  document.getElementById('juz-detail-list').innerHTML = detail;
+}
+
+function toggleJuz(juzNum) {
+  const juz = state.juzStatus.find(j => j.juz === juzNum);
+  if (!juz) return;
+  if (!juz.memorized && !juz.partial) { juz.partial = true; }
+  else if (juz.partial) { juz.partial = false; juz.memorized = true; }
+  else { juz.memorized = false; juz.partial = false; }
+  saveState();
+  renderJuzMap();
+  renderMilestones();
+}
+
+function renderSummary() {
+  renderWeeklySummary();
+  renderMonthlySummary();
+  renderAllTimeSummary();
+}
+
+function renderWeeklySummary() {
+  const week = getWeekDates();
+  const entries = week.map(d => getLogEntry(d)).filter(Boolean);
+  const hifzDone = entries.reduce((s, e) => s + (e.hifzStatus === 'done' ? (e.hifzCount||1) : 0), 0);
+  const revPages = entries.reduce((s, e) => s + (e.revCount||0), 0);
+  const sheikhPages = entries.reduce((s, e) => s + (e.sheikhCount||0), 0);
+  const missed = entries.filter(e => e.hifzStatus === 'missed' || e.revStatus === 'missed').length;
+  const pct = entries.length > 0 ? Math.round((entries.filter(e => e.hifzStatus === 'done' && e.revStatus === 'done').length / 7) * 100) : 0;
+
+  document.getElementById('summary-weekly').innerHTML = `
+    <div class="summary-row">
+      <div class="sum-card accent-gold"><div class="val">${hifzDone}</div><div class="lbl">Pages Memorized This Week</div></div>
+      <div class="sum-card accent-green"><div class="val">${revPages}</div><div class="lbl">Pages Reviewed This Week</div></div>
+      <div class="sum-card accent-blue"><div class="val">${sheikhPages}</div><div class="lbl">Sheikh Pages This Week</div></div>
+      <div class="sum-card accent-red"><div class="val">${missed}</div><div class="lbl">Days with Missed Tasks</div></div>
+      <div class="sum-card"><div class="val">${pct}%</div><div class="lbl">Completion Rate</div></div>
+    </div>
+    ${entries.length === 0 ? '<p style="color:var(--text-muted);text-align:center;padding:20px">No entries logged this week yet.</p>' : ''}
+    <div class="card">
+      <div class="section-title">Week Notes</div>
+      <div class="notes-list">
+        ${entries.filter(e => e.notes).map(e => `<div class="note-item"><div class="note-date">${formatDate(e.date)}</div><div class="note-text">${e.notes}</div></div>`).join('') || '<p class="info-text">No notes this week.</p>'}
+      </div>
+    </div>`;
+}
+
+function renderMonthlySummary() {
+  const now = new Date();
+  const ym = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0');
+  const entries = state.log.filter(e => e.date.startsWith(ym));
+  const hifzDone = entries.reduce((s, e) => s + (e.hifzStatus === 'done' ? (e.hifzCount||1) : 0), 0);
+  const revPages = entries.reduce((s, e) => s + (e.revCount||0), 0);
+  const sheikhPages = entries.reduce((s, e) => s + (e.sheikhCount||0), 0);
+  const missed = entries.filter(e => e.hifzStatus === 'missed').length;
+  const totalDays = entries.length;
+  const doneDays = entries.filter(e => e.hifzStatus === 'done' && e.revStatus === 'done').length;
+  const pct = totalDays > 0 ? Math.round((doneDays / totalDays) * 100) : 0;
+  const monthName = now.toLocaleDateString('en-GB', {month:'long', year:'numeric'});
+
+  document.getElementById('summary-monthly').innerHTML = `
+    <div class="section-title">${monthName}</div>
+    <div class="summary-row">
+      <div class="sum-card accent-gold"><div class="val">${hifzDone}</div><div class="lbl">Pages Memorized</div></div>
+      <div class="sum-card accent-green"><div class="val">${revPages}</div><div class="lbl">Pages Reviewed</div></div>
+      <div class="sum-card accent-blue"><div class="val">${sheikhPages}</div><div class="lbl">Sheikh Pages</div></div>
+      <div class="sum-card accent-red"><div class="val">${missed}</div><div class="lbl">Missed Days</div></div>
+      <div class="sum-card"><div class="val">${pct}%</div><div class="lbl">Completion Rate</div></div>
+      <div class="sum-card"><div class="val">${totalDays}</div><div class="lbl">Days Logged</div></div>
+    </div>`;
+}
+
+function renderAllTimeSummary() {
+  const totalMem = Math.round(getTotalMemorized());
+  const totalRev = getTotalReviewed();
+  const totalSh = getTotalSheikh();
+  const streak = getCurrentStreak();
+  const daysLogged = state.log.length;
+  const doneDays = state.log.filter(e => e.hifzStatus === 'done' && e.revStatus === 'done').length;
+  const pct = daysLogged > 0 ? Math.round((doneDays/daysLogged)*100) : 0;
+  const remainingPages = Math.max(0, 312 - totalMem);
+  const pace = getActualPace();
+  const daysToFinish = pace > 0 ? Math.ceil(remainingPages / pace) : null;
+  const delays = getTotalDelays();
+  const finishDate = getEstimatedFinishDate();
+
+  document.getElementById('summary-alltime').innerHTML = `
+    <div class="summary-row">
+      <div class="sum-card accent-gold"><div class="val">${totalMem}</div><div class="lbl">Total Pages Memorized</div></div>
+      <div class="sum-card accent-green"><div class="val">${totalRev}</div><div class="lbl">Total Pages Reviewed</div></div>
+      <div class="sum-card accent-blue"><div class="val">${totalSh}</div><div class="lbl">Total Sheikh Pages</div></div>
+      <div class="sum-card"><div class="val">${streak} 🔥</div><div class="lbl">Current Streak</div></div>
+      <div class="sum-card"><div class="val">${daysLogged}</div><div class="lbl">Days Logged</div></div>
+      <div class="sum-card"><div class="val">${pct}%</div><div class="lbl">Overall Completion Rate</div></div>
+    </div>
+    <div class="card" style="margin-top:16px">
+      <div class="section-title">Journey Intelligence — Full Report</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+        <div>
+          <p class="info-text"><strong>Pages remaining:</strong> ${remainingPages} of 312 new pages</p>
+          <p class="info-text" style="margin-top:8px"><strong>Actual pace (last 14 days):</strong> ${pace.toFixed(2)} pages/day</p>
+          <p class="info-text" style="margin-top:8px"><strong>Estimated completion:</strong> ${finishDate ? (remainingPages === 0 ? 'Complete! 🏆' : finishDate.toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'})) : 'Insufficient data'}</p>
+          <p class="info-text" style="margin-top:8px"><strong style="color:${delays > 0 ? 'var(--missed)' : 'var(--done)'}">Total delays:</strong> ${delays} day(s) ${delays > 0 ? '⚠️ These are pushing your finish date further.' : '✓'}</p>
+        </div>
+        <div>
+          <p class="info-text"><strong>Juz memorized:</strong> ${state.juzStatus.filter(j=>j.memorized).length} / 30</p>
+          <p class="info-text" style="margin-top:8px"><strong>Sheikh Khatma progress:</strong> ${Math.min(100,Math.round((totalSh/604)*100))}%</p>
+          <p class="info-text" style="margin-top:8px"><strong>Overall journey:</strong> ${Math.min(100,Math.round(((totalMem+302)/604)*100))}% complete</p>
+          <p class="info-text" style="margin-top:8px"><strong>Today's Manzil:</strong> ${getTodayManzilInfo() ? 'Juz ' + getTodayManzilJuz() + ' — ' + getTodayManzilInfo().surah : 'No Juz memorized yet'}</p>
+        </div>
+      </div>
+    </div>`;
+}
+
+function renderMilestones() {
+  const totalMem = Math.round(getTotalMemorized());
+  const totalSh = getTotalSheikh();
+  const streak = getCurrentStreak();
+  const memorizedJuz = state.juzStatus.filter(j => j.memorized).length;
+
+  const html = MILESTONES.map(m => {
+    let current = 0, target = m.target, achieved = false;
+    if (m.type === 'page_mem') {
+      current = totalMem + 302;
+      achieved = current >= target;
+      current = Math.min(current, target);
+    } else if (m.type === 'mem_juz') {
+      current = memorizedJuz - 15;
+      achieved = current >= target;
+      current = Math.max(0, Math.min(current, target));
+    } else if (m.type === 'juz') {
+      current = memorizedJuz;
+      achieved = current >= target;
+      current = Math.min(current, target);
+    } else if (m.type === 'sheikh') {
+      current = totalSh;
+      achieved = current >= target;
+      current = Math.min(current, target);
+    } else if (m.type === 'streak') {
+      current = streak;
+      achieved = current >= target;
+      current = Math.min(current, target);
+    }
+    const pct = target > 0 ? Math.min(100, Math.round((current / target) * 100)) : 0;
+    return `<div class="milestone-card ${achieved ? 'achieved' : ''}">
+      <div class="milestone-icon">${m.icon}</div>
+      <div class="milestone-name">${m.name}</div>
+      <div class="milestone-detail">${m.detail}</div>
+      <div class="milestone-progress-bar"><div class="milestone-progress-fill" style="width:${pct}%"></div></div>
+      <div class="milestone-pct">${achieved ? '✦ Achieved!' : pct + '%'}</div>
+    </div>`;
+  }).join('');
+  document.getElementById('milestones-grid').innerHTML = html;
+}
+
+// ====================================================
+//  MODAL
+// ====================================================
+function openLogModal(sessionMin) {
+  openLogModalForDate(today(), sessionMin);
+}
+
+function openLogModalForDate(dateStr, sessionMin) {
+  const entry = getLogEntry(dateStr);
+  const isEdit = !!entry;
+  document.getElementById('log-date').value = dateStr;
+  document.getElementById('modal-title').textContent = isEdit ? '✏️ Edit Entry — ' + formatDate(dateStr) : '📖 New Log Entry';
+  document.getElementById('modal-delete-btn').style.display = isEdit ? 'inline-flex' : 'none';
+  document.getElementById('modal-delete-btn').onclick = () => {
+    closeModal();
+    deleteEntry(dateStr);
+  };
+  document.getElementById('log-hifz-page').value = entry ? (entry.hifzPage || '') : getTodayHifzPage();
+  document.getElementById('log-hifz-count').value = entry ? (entry.hifzCount || 1) : 1;
+  document.getElementById('log-hifz-status').value = entry ? entry.hifzStatus : 'done';
+  document.getElementById('log-rev-count').value = entry ? (entry.revCount || 4) : 4;
+  document.getElementById('log-rev-from').value = entry ? (entry.revFrom || '') : getTodayRevPage();
+  document.getElementById('log-rev-status').value = entry ? entry.revStatus : 'done';
+  document.getElementById('log-sheikh-count').value = entry ? (entry.sheikhCount || 0) : 0;
+  document.getElementById('log-sheikh-from').value = entry ? (entry.sheikhFrom || '') : '';
+  document.getElementById('log-sheikh-status').value = entry ? entry.sheikhStatus : 'pending';
+  document.getElementById('log-notes').value = entry ? (entry.notes || '') : '';
+
+  // Grade system
+  selectedGrade = entry ? (entry.hifzGrade || '') : '';
+  ['A','B','C','D','E'].forEach(g => {
+    document.getElementById('grade-' + g).className = 'grade-opt' + (g === selectedGrade ? ' sel-' + g : '');
+  });
+  document.getElementById('grade-note').textContent = 'A = Perfect · B = Near-perfect · C = Stumbled · D = Weak · E = Failed (triggers Correction task)';
+
+  // Session time from timer
+  const min = sessionMin !== undefined ? sessionMin : (timerState.totalLoggedMin || 0);
+  if (min > 0) {
+    document.getElementById('modal-session-time').style.display = 'flex';
+    document.getElementById('modal-session-time-text').textContent =
+      'Timer Session: ' + min + ' min (' +
+      Math.round(timerState.elapsed.hifz / 60000) + ' Hifz · ' +
+      Math.round((timerState.elapsed.review + timerState.elapsed.manzil) / 60000) + ' Review)';
+  } else {
+    document.getElementById('modal-session-time').style.display = 'none';
+  }
+
+  document.getElementById('modal-overlay').classList.add('open');
+}
+
+function editEntry(dateStr) {
+  openLogModalForDate(dateStr);
+}
+
+function closeModal() {
+  timerState.totalLoggedMin = 0;
+  document.getElementById('modal-overlay').classList.remove('open');
+}
+
+function saveLogEntry() {
+  const dateStr = document.getElementById('log-date').value;
+  if (!dateStr) { alert('Please select a date.'); return; }
+
+  const hifzGrade = selectedGrade;
+  const entry = {
+    date: dateStr,
+    hifzPage: parseInt(document.getElementById('log-hifz-page').value) || null,
+    hifzCount: parseInt(document.getElementById('log-hifz-count').value) || 1,
+    hifzStatus: document.getElementById('log-hifz-status').value,
+    hifzGrade: hifzGrade,
+    // If grade is now C or above and there was a correction pending, mark it done
+    correctionDone: (hifzGrade && hifzGrade !== 'D' && hifzGrade !== 'E') ? true : false,
+    revCount: parseInt(document.getElementById('log-rev-count').value) || 0,
+    revFrom: parseInt(document.getElementById('log-rev-from').value) || null,
+    revStatus: document.getElementById('log-rev-status').value,
+    sheikhCount: parseInt(document.getElementById('log-sheikh-count').value) || 0,
+    sheikhFrom: parseInt(document.getElementById('log-sheikh-from').value) || null,
+    sheikhStatus: document.getElementById('log-sheikh-status').value,
+    notes: document.getElementById('log-notes').value.trim(),
+    savedAt: new Date().toISOString(),
+  };
+
+  // Preserve correctionDone if it was already set true previously
+  const existing = state.log.find(e => e.date === dateStr);
+  if (existing && existing.correctionDone && !entry.correctionDone) {
+    entry.correctionDone = existing.correctionDone;
+  }
+
+  const idx = state.log.findIndex(e => e.date === dateStr);
+  if (idx >= 0) state.log[idx] = entry;
+  else state.log.push(entry);
+  state.log.sort((a,b) => a.date.localeCompare(b.date));
+
+  // Reset timer after successful save
+  timerState.totalLoggedMin = 0;
+  timerState.elapsed = { hifz: 0, review: 0, manzil: 0 };
+  document.getElementById('timer-display').textContent = '00:00';
+  document.getElementById('timer-start-btn').textContent = '▶ Start';
+  document.getElementById('timer-log-btn').style.display = 'none';
+  document.getElementById('timer-reset-btn').style.display = 'none';
+  renderTimerBreakdown();
+
+  saveState();
+  closeModal();
+  renderAll();
+}
+
+// ====================================================
+//  PAGE SWITCHING
+// ====================================================
+function switchPage(page) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('page-' + page).classList.add('active');
+  document.querySelectorAll('.nav-tab').forEach(t => {
+    if (t.getAttribute('onclick') && t.getAttribute('onclick').includes("'"+page+"'")) {
+      t.classList.add('active');
+    }
+  });
+  if (page === 'log') renderLog();
+  if (page === 'juz') renderJuzMap();
+  if (page === 'summary') renderSummary();
+  if (page === 'milestones') renderMilestones();
+}
+
+function switchSummary(tab) {
+  document.querySelectorAll('.summary-view').forEach(v => v.style.display = 'none');
+  document.querySelectorAll('.inner-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('summary-' + tab).style.display = 'block';
+  event.target.classList.add('active');
+}
+
+function renderAll() {
+  renderHeader();
+  renderToday();
+  renderMilestones();
+}
+
+// ====================================================
+//  INIT
+// ====================================================
+loadState();
+document.getElementById('log-date').value = today();
+renderTimerBreakdown();
+renderAll();
+</script>
+</body>
+</html>
